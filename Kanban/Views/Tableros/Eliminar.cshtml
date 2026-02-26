@@ -1,0 +1,33 @@
+@model Kanban.Models.Tablero
+
+@{
+    ViewData["Title"] = "Eliminar Tablero";
+}
+
+<h2>Eliminar Tablero</h2>
+
+<h3>¿Está seguro que desea eliminar este tablero?</h3>
+<div>
+    <h4>Tablero</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.nombre)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.nombre)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.descripcion)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.descripcion)
+        </dd>
+    </dl>
+    
+    <form asp-action="ConfirmarEliminar">
+        <input type="hidden" asp-for="id" />
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>

@@ -1,0 +1,132 @@
+@model Kanban.ViewModels.Tareas.ListarTareasViewModel
+
+@{
+    ViewData["Title"] = "Tareas del Tablero";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Tareas</h2>
+        @if(ViewBag.PuedeEditar)
+        {
+            <a href="@Url.Action("Crear", "Tareas", new { id = Model.IdTablero })" 
+            class="btn btn-success">
+            <i class="fas fa-plus"></i> Nueva Tarea
+            </a>
+        }
+    </div>
+
+    <div class="kanban-board">
+        @foreach (var tarea in Model.Tareas)
+        {
+            <div class="kanban-card" style="background-color: @tarea.Color;">
+                <div class="kanban-card-content">
+                    <h5>@tarea.Nombre</h5>
+                    <p><b>Descripcion: </b>@tarea.Descripcion</p>
+                    <p><b>Asiganda a: </b>@tarea.NombrePropietario</p>
+                    <small class="estado-badge">@tarea.Estado</small>
+                </div>
+                @if (ViewBag.PuedeEditar || tarea.IdUsuarioAsignado == ViewBag.Id)
+                {
+                    <div class="kanban-card-actions">
+                        <a href="@Url.Action("Editar", "Tareas", new { id = tarea.Id })" 
+                        class="btn-editar" 
+                        title="Editar">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                        @if (!(tarea.IdUsuarioAsignado == ViewBag.Id))
+                        {
+                        <form asp-action="ConfirmarEliminar" 
+                            asp-route-id="@tarea.Id" 
+                            method="post" 
+                            onsubmit="return confirm('¿Eliminar esta tarea?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-eliminar" title="Eliminar">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </form>
+                        }
+                    </div>
+                }else{
+                    <small class="text-muted permiso-badge">Solo lectura</small>
+                }
+                </div>
+        }
+    </div>
+</div>
+
+<style>
+    .kanban-board {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .kanban-card {
+        border-radius: 8px;
+        padding: 1.5rem;
+        position: relative;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        min-height: 180px;
+        transition: transform 0.2s;
+    }
+
+    .kanban-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .kanban-card-actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-editar, .btn-eliminar {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .btn-editar {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-eliminar {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .estado-badge {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(255,255,255,0.9);
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.85em;
+    }
+    .permiso-badge{
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(255,255,255,0.9);
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.85em;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <!-- Font Awesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+}

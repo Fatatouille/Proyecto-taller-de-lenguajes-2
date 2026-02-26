@@ -1,0 +1,58 @@
+@model Kanban.ViewModels.Tableros.ListarTablerosViewModel
+
+@{
+    ViewData["Title"] = "Tableros";
+    var rolUsuario = ViewContext.HttpContext.Session.GetString("Rol") ?? "";
+}
+
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <form asp-action="Index" method="get" class="form-inline">
+                <div class="input-group">
+                    <input type="number" name="idPropietario" class="form-control" placeholder="Buscar por ID de propietario..." value="@ViewBag.IdPropietario" min="1" />
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                        <a asp-action="Index" class="btn btn-secondary">X</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4 text-right">
+            <a href="@Url.Action("Crear", "Tableros")" class="btn btn-success">Crear Nuevo Tablero</a>
+        </div>
+    </div>
+
+    <div class="row">
+        @foreach (var tablero in Model.Tableros)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title">@tablero.Nombre</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><b>Propietario: </b>@tablero.NombrePropietario</p>
+                        <p class="card-text"><b>Descripcion: </b>@tablero.Descripcion</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="@Url.Action("Index", "Tareas", new { id = tablero.Id })" class="btn btn-primary">Ver detalles</a>
+                        @if (rolUsuario=="Administrador" || tablero.EsPropietario == true)
+                        {
+                            <a href="@Url.Action("Editar", "Tableros", new { id = tablero.Id })" class="btn btn-success">Editar</a>
+
+                            <form asp-action="Eliminar" method="post" asp-controller="Tableros" asp-route-id="@tablero.Id" class="d-inline" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tablero y todas sus tareas asociadas?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

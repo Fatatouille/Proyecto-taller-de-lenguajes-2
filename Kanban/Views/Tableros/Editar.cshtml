@@ -1,0 +1,52 @@
+@model Kanban.ViewModels.Tableros.ModificarTableroViewModel
+
+@{
+    ViewData["Title"] = "Editar Tablero";
+    var rolUsuario = ViewContext.HttpContext.Session.GetString("Rol") ?? "";
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    </div>
+}
+
+<h2>Editar Tablero</h2>
+
+<form asp-action="Editar">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Descripcion"></label>
+        <input asp-for="Descripcion" class="form-control" />
+        <span asp-validation-for="Descripcion" class="text-danger"></span>
+    </div>
+    @if (rolUsuario == "Administrador")
+    {
+        <div class="form-group">
+            <label>Asignar a:</label>
+            <select asp-for="IdUsuarioAsignado" class="form-control">
+                <option value="">Sin asignar</option>
+                @if (Model.UsuariosDisponibles != null)
+                {
+                    @foreach (var usuario in Model.UsuariosDisponibles)
+                    {
+                        <option value="@usuario.id">@usuario.nombreDeUsuario</option>
+                    }
+                }
+            </select>
+        </div>
+    }else{
+        <input type="hidden" asp-for="IdUsuarioAsignado" value="@ViewBag.Id" />
+    }
+    <button type="submit" class="btn btn-custom">Guardar</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

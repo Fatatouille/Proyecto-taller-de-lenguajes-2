@@ -1,0 +1,36 @@
+@model Kanban.Models.Usuario
+
+@{
+    ViewData["Title"] = "Eliminar Usuario";
+}
+
+<h2>Eliminar Usuario</h2>
+
+<h3>¿Está seguro que desea eliminar este usuario?</h3>
+<div>
+    <h4>Usuario</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.nombreDeUsuario)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.nombreDeUsuario)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.rol)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.rol)
+        </dd>
+    </dl>
+    
+    <form asp-action="ConfirmarEliminar">
+        <input type="hidden" asp-for="id" />
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

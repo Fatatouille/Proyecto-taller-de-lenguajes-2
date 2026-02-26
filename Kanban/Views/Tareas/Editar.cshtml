@@ -1,0 +1,84 @@
+@model Kanban.ViewModels.Tareas.ModificarTareaViewModel
+
+@{
+    ViewData["Title"] = "Editar Tarea";
+    bool esAdmin = ViewContext.HttpContext.Session.GetString("Rol") == "Administrador";
+    bool esPropietario = ViewBag.EsPropietario;
+    bool esAsignado = Model.IdUsuarioAsignado == ViewBag.Id;
+    bool soloEstado = !esAdmin && !esPropietario && esAsignado;
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    </div>
+}
+
+<div class="container mt-4">
+    <div class="kanban-card" style="max-width: 600px; margin: 0 auto; pading:1em; background-color: @Model.Color;">
+        <h2 class="mb-4">Editar Tarea</h2>
+        
+        <form asp-action="Editar">
+            <input type="hidden" asp-for="Id" value="@Model.Id" />
+            
+            <div class="form-group">
+                <label asp-for="Nombre"></label>
+                <input asp-for="Nombre" class="form-control" readonly="@soloEstado"/>
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Descripcion"></label>
+                <textarea asp-for="Descripcion" class="form-control" rows="3" readonly="@soloEstado"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Color"></label>
+                        <input type="color" asp-for="Color" class="form-control" style="height: 40px; padding: 2px;" readonly="@soloEstado"/>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Estado"></label>
+                        <select asp-for="Estado" class="form-control" asp-items="Html.GetEnumSelectList<EstadoTarea>()" disabled="@(!soloEstado && !esAdmin && !esPropietario)"></select>
+                    </div>
+                </div>
+            </div>
+
+            @if(!soloEstado)
+            {
+            <div class="form-group">
+            <label>Asignar a:</label>
+                <select asp-for="IdUsuarioAsignado" class="form-control">
+                    <option value="">Sin asignar</option>
+                    @if (Model.UsuariosDisponibles != null)
+                    {
+                        @foreach (var usuario in Model.UsuariosDisponibles)
+                        {
+                            <option value="@usuario.id" selected="@(usuario.id == Model.IdUsuarioAsignado)">@usuario.nombreDeUsuario</option>
+                        }
+                    }
+                </select>
+            </div>
+            }
+            else
+            {
+                <input type="hidden" asp-for="IdUsuarioAsignado" />
+            }
+
+            <div class="mt-4 text-right">
+                <button type="submit" class="btn btn-custom">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

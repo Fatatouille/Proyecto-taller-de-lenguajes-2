@@ -1,0 +1,37 @@
+@model Kanban.Models.Tarea
+
+@{
+    ViewData["Title"] = "Eliminar Tarea";
+}
+
+<div class="container mt-4">
+    <div class="kanban-card" style="max-width: 500px; margin: 0 auto; background-color: @Model.color;">
+        <h2 class="text-danger mb-4">¿Eliminar Tarea?</h2>
+        
+        <div class="task-details">
+            <h4>@Model.nombre</h4>
+            <p class="text-muted">@Model.descripcion</p>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <small class="estado-badge">@Model.estado</small>
+                <form asp-action="ConfirmarEliminar">
+                    <input type="hidden" asp-for="id" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Confirmar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .task-details {
+        padding: 1.5rem;
+    }
+    .estado-badge {
+        background: rgba(255,255,255,0.9);
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-weight: 500;
+    }
+</style>
